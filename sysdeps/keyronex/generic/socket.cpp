@@ -94,26 +94,22 @@ int
 sys_getsockopt(int fd, int layer, int number, void *__restrict buffer,
     socklen_t *__restrict size)
 {
-	(void)fd;
-	(void)layer;
-	(void)number;
-	(void)buffer;
-	(void)size;
-	log_unimplemented();
-	return ENOSYS;
+	auto ret = syscall5(kPXSysGetSockOpt, fd, layer, number,
+	    (uintptr_t)buffer, (uintptr_t)size, NULL);
+	if (int e = sc_error(ret); e)
+		return e;
+	return 0;
 }
 
 int
 sys_setsockopt(int fd, int layer, int number, const void *buffer,
     socklen_t size)
 {
-	(void)fd;
-	(void)layer;
-	(void)number;
-	(void)buffer;
-	(void)size;
-	log_unimplemented();
-	return ENOSYS;
+	auto ret = syscall5(kPXSysGetSockOpt, fd, layer, number,
+	    (uintptr_t)buffer, size, NULL);
+	if (int e = sc_error(ret); e)
+		return e;
+	return 0;
 }
 
 }
