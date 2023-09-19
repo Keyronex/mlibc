@@ -1,0 +1,1 @@
+# AArch64 only uses .init_array/.fini_array

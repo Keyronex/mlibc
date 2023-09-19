@@ -10,7 +10,7 @@ libc_sources += files(
 	'generic/signal.cpp',
 	'generic/socket.cpp',
 	'generic/thread.cpp',
-	'generic/thread.S'
+	host_machine.cpu_family() / 'thread.S'
 )
 
 if not no_headers
