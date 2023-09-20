@@ -78,9 +78,12 @@ struct __mlibc_jmpbuf_register_state {
 	double fs10;
 	double fs11;
 };
+#elif defined (__m68k__)
+struct __mlibc_jmpbuf_register_state {
+	// TODO
+};
 #else
 #  error "Missing architecture specific code"
 #endif
 
 #endif // MLIBC_MACHINE_H
-

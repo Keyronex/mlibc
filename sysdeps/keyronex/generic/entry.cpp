@@ -52,6 +52,7 @@ sys_sigreturn(ucontext_t *context)
 static void
 do_stacktrace(ucontext_t *ctx)
 {
+#ifdef __amd64__
 	size_t *base_ptr = (size_t *)ctx->uc_mcontext.gregs[REG_RBP];
 
 	mlibc::infoLogger() << "Stacktrace:" << frg::endlog;
@@ -68,6 +69,9 @@ do_stacktrace(ucontext_t *ctx)
 			break;
 		base_ptr = (size_t *)old_bp;
 	}
+#else
+	mlibc::panicLogger() << "No stack trace here" << frg::endlog;
+#endif
 }
 
 static void

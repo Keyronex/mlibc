@@ -12,7 +12,14 @@ struct __abi_tls_entry {
 static_assert(sizeof(__abi_tls_entry) == 16, "Bad __abi_tls_entry size");
 
 extern "C" void *__dlapi_get_tls(struct __abi_tls_entry *);
+#elif defined(__m68k__)
+struct __abi_tls_entry {
+	struct SharedObject *object;
+	uint32_t offset;
+};
+static_assert(sizeof(__abi_tls_entry) == 8, "Bad __abi_tls_entry size");
 
+extern "C" void *__dlapi_get_tls(struct __abi_tls_entry *);
 #else
 #error "Missing architecture specific code."
 #endif
@@ -21,6 +28,8 @@ extern "C" void *__dlapi_get_tls(struct __abi_tls_entry *);
 constexpr inline unsigned long TLS_DTV_OFFSET = 0x800;
 #elif defined(__x86_64__) || defined(__aarch64__)
 constexpr inline unsigned long TLS_DTV_OFFSET = 0;
+#elif defined (__m68k__)
+constexpr inline unsigned long TLS_DTV_OFFSET = 0x8000;
 #else
 #error "Missing architecture specific code."
 #endif

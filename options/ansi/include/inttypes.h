@@ -90,8 +90,13 @@
 #define PRIXMAX "lX"
 #define PRIoPTR "lo"
 #define PRIuPTR "lu"
+#ifdef __m68k__
+#define PRIxPTR "x"
+#define PRIXPTR "X"
+#else
 #define PRIxPTR "lx"
 #define PRIXPTR "lX"
+#endif
 
 #define SCNu32 "u"
 #define SCNu64 "lu"

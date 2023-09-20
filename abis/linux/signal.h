@@ -443,6 +443,27 @@ typedef struct __ucontext {
 	mcontext_t uc_mcontext;
 } ucontext_t;
 
+#elif defined (__m68k__)
+
+/* PLACEHOLDER */
+
+typedef struct sigcontext {
+	uint64_t fault_address;
+	uint64_t regs[31];
+	uint64_t sp;
+	uint64_t pc;
+	uint64_t pstate;
+	uint8_t __reserved[4096];
+} mcontext_t;
+
+typedef struct __ucontext {
+	unsigned long uc_flags;
+	struct __ucontext *uc_link;
+	stack_t uc_stack;
+	sigset_t uc_sigmask;
+	mcontext_t uc_mcontext;
+} ucontext_t;
+
 #else
 #error "Missing architecture specific code."
 #endif

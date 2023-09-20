@@ -208,6 +208,66 @@ sc_error(uintptr_t ret)
 		return -ret;
 	return 0;
 }
+#else
+static inline uintptr_t
+syscall0(uintptr_t num, uintptr_t *out)
+{
+	for (;;) ;
+	return 0;
+}
+
+static inline uintptr_t
+syscall1(uintptr_t num, uintptr_t arg1, uintptr_t *out)
+{
+	for (;;) ;
+	return 0;
+}
+
+static inline uintptr_t
+syscall2(uintptr_t num, uintptr_t arg1, uintptr_t arg2, uintptr_t *out)
+{
+	for (;;) ;
+	return 0;
+}
+
+static inline uintptr_t
+syscall3(intptr_t num, uintptr_t arg1, uintptr_t arg2, uintptr_t arg3,
+    uintptr_t *out)
+{
+	for (;;) ;
+	return 0;
+}
+
+static inline uintptr_t
+syscall4(intptr_t num, uintptr_t arg1, uintptr_t arg2, uintptr_t arg3,
+    uintptr_t arg4, uintptr_t *out)
+{
+	for (;;) ;
+	return 0;
+}
+
+static inline uintptr_t
+syscall5(uintptr_t num, uintptr_t arg1, uintptr_t arg2, uintptr_t arg3,
+    uintptr_t arg4, uintptr_t arg5, uintptr_t *out)
+{
+	for (;;) ;
+	return 0;
+}
+
+static inline uintptr_t
+syscall6(uintptr_t num, uintptr_t arg1, uintptr_t arg2, uintptr_t arg3,
+    uintptr_t arg4, uintptr_t arg5, uintptr_t arg6, uintptr_t *out)
+{
+	for (;;) ;
+	return 0;
+}
+
+static inline int
+sc_error(uintptr_t ret)
+{
+	for (;;) ;
+	return 0;
+}
 #endif
 
 #endif

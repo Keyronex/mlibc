@@ -3,7 +3,11 @@
 .hidden __dso_handle
 .global __dso_handle
 __dso_handle:
+#ifndef __m68k__
 	.quad __dso_handle
+#else
+	.long __dso_handle
+#endif
 
 .section .init
 .hidden _init
@@ -26,4 +30,3 @@ __CTOR_LIST__:
 __DTOR_LIST__:
 
 .section .note.GNU-stack,"",%progbits
-

@@ -35,6 +35,8 @@ constexpr inline bool tlsAboveTp = false;
 constexpr inline bool tlsAboveTp = true;
 #elif defined(__riscv)
 constexpr inline bool tlsAboveTp = true;
+#elif defined (__m68k__)
+constexpr inline bool tlsAboveTp = true;
 #else
 #	error Unknown architecture
 #endif
@@ -178,8 +180,8 @@ SharedObject *ObjectRepository::requestObjectWithName(frg::string_view name,
 		frg::string<MemoryAllocator> sPath { getAllocator() };
 		if (path.starts_with("$ORIGIN")) {
 			frg::string_view dirname = origin->path;
-			auto lastsl = dirname.find_last('/');
-			if (lastsl != (uint64_t)-1) {
+			size_t lastsl = dirname.find_last('/');
+			if (lastsl != (size_t)-1) {
 				dirname = dirname.sub_string(0, lastsl);
 			} else {
 				dirname = ".";
@@ -1738,4 +1740,3 @@ void Loader::_processLazyRelocations(SharedObject *object) {
 		}
 	}
 }
-

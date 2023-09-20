@@ -116,7 +116,7 @@ if host_machine.system() == 'linux'
 	endif
 
 	if not import('fs').is_dir(get_option('linux_kernel_headers'))
-		error('linux_kernel_headers is not set to a valid path')
+		error('linux_kernel_headers is not set to a valid path: it is set to ' + get_option('linux_kernel_headers'))
 	endif
 
 	rtdl_include_dirs += include_directories(get_option('linux_kernel_headers'))
@@ -206,7 +206,7 @@ if not disable_linux_option
 	endif
 
 	if not import('fs').is_dir(get_option('linux_kernel_headers'))
-		error('linux_kernel_headers is not set to a valid path')
+		error('linux_kernel_headers is not set to a valid path: it is set to ' + get_option('linux_kernel_headers'))
 	endif
 
 	rtdl_include_dirs += include_directories('options/linux/include')
