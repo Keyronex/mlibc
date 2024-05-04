@@ -76,6 +76,15 @@ if not headers_only
 		install_dir: get_option('libdir')
 	)
 
+	custom_target('crt1',
+		build_by_default: true,
+		command: c_compiler.cmd_array() + ['-c', '-o', '@OUTPUT@', '@INPUT@'],
+		input: host_machine.cpu_family() / 'crt-src/crt0.S',
+		output: 'crt1.o',
+		install: true,
+		install_dir: get_option('libdir')
+	)
+
 	custom_target('crti',
 		build_by_default: true,
 		command: c_compiler.cmd_array() + ['-c', '-o', '@OUTPUT@', '@INPUT@'],
@@ -94,4 +103,3 @@ if not headers_only
 		install_dir: get_option('libdir')
 	)
 endif
-
