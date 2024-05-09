@@ -22,7 +22,7 @@ namespace mlibc {
 void
 sys_libc_log(const char *message)
 {
-	syscall1(kPXSysDebug, (uintptr_t)message, NULL);
+	syscall1(kKrxDebugMessage, (uintptr_t)message, NULL);
 }
 
 void
@@ -386,6 +386,7 @@ int
 sys_vm_map(void *hint, size_t size, int prot, int flags, int fd, off_t offset,
     void **window)
 {
+	syscall0(55, NULL);
 	uintptr_t r = syscall6(kPXSysMmap, (uintptr_t)hint, size, prot, flags,
 	    fd, offset, NULL);
 	if (int e = sc_error(r); e)
@@ -397,6 +398,7 @@ sys_vm_map(void *hint, size_t size, int prot, int flags, int fd, off_t offset,
 int
 sys_vm_unmap(void *pointer, size_t size)
 {
+	syscall0(55, NULL);
 	uintptr_t r = syscall2(kPXSysMunmap, (uintptr_t)pointer, size, NULL);
 	if (int e = sc_error(r); e)
 		return e;
@@ -416,14 +418,21 @@ sys_vm_protect(void *pointer, size_t size, int prot)
 int
 sys_anon_allocate(size_t size, void **pointer)
 {
-	return sys_vm_map(NULL, size, PROT_EXEC | PROT_READ | PROT_WRITE,
-	    MAP_ANONYMOUS, -1, 0, pointer);
+	uintptr_t r, ret_out;
+	r =  syscall1(kKrxVmAllocate, (uintptr_t)size, &ret_out);
+	if (int e = sc_error(r); e)
+		return e;
+	*pointer = (void*)ret_out;
+	return 0;
 }
 
 int
 sys_anon_free(void *pointer, size_t size)
 {
-	return sys_vm_unmap(pointer, size);
+	(void)pointer;
+	(void)size;
+	//return sys_vm_unmap(pointer, size);
+	return -ENOTSUP;
 }
 
 pid_t

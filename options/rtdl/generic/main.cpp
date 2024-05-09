@@ -23,9 +23,9 @@
 #define HIDDEN  __attribute__((__visibility__("hidden")))
 #define EXPORT  __attribute__((__visibility__("default")))
 
-static constexpr bool logEntryExit = false;
-static constexpr bool logStartup = false;
-static constexpr bool logDlCalls = false;
+static constexpr bool logEntryExit = true;
+static constexpr bool logStartup = true;
+static constexpr bool logDlCalls = true;
 
 #ifndef MLIBC_STATIC_BUILD
 extern HIDDEN void *_GLOBAL_OFFSET_TABLE_[];
@@ -66,6 +66,30 @@ uintptr_t getLdsoBase() {
 #elif defined(__riscv)
 	return reinterpret_cast<uintptr_t>(&__ehdr_start);
 #endif
+}
+
+extern "C" void
+_rtld_relocate_nonplt_self(Elf32_Dyn *dynp, Elf32_Addr relocbase)
+{
+	const Elf32_Rela *rela = 0, *relalim;
+	Elf32_Addr relasz = 0;
+	Elf32_Addr *where;
+
+	for (; dynp->d_tag != DT_NULL; dynp++) {
+		switch (dynp->d_tag) {
+		case DT_RELA:
+			rela = (const Elf32_Rela *)(relocbase + dynp->d_un.d_ptr);
+			break;
+		case DT_RELASZ:
+			relasz = dynp->d_un.d_val;
+			break;
+		}
+	}
+	relalim = (const Elf32_Rela *)((const uint8_t *)rela + relasz);
+	for (; rela < relalim; rela++) {
+		where = (Elf32_Addr *)(relocbase + rela->r_offset);
+		*where += (Elf32_Addr)relocbase;
+	}
 }
 
 // Relocates the dynamic linker (i.e. this DSO) itself.
