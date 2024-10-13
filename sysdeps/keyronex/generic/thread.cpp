@@ -32,12 +32,14 @@ extern "C" void __mlibc_thread_entry();
 	int sys_clone(void *tcb, pid_t *tid_out, void *stack) {
 		(void)tcb;
 
-		auto ret = syscall2(kPXSysForkThread, (uintptr_t)__mlibc_thread_entry, (uintptr_t)stack, NULL);
-		if (int e = sc_error(ret); e)
-			return e;
+		auto r = syscall2(kKrxForkThread, (uintptr_t)__mlibc_thread_entry, (uintptr_t)stack, NULL);
+		if (r > 0) {
+			*tid_out = r;
+			return 0;
+		}
+		__ensure(r != 0);
 
-		*tid_out = ret;
-		return 0;
+		return r;
 	}
 
 	int sys_prepare_stack(void **stack, void *entry, void *arg, void *tcb, size_t *stack_size, size_t *guard_size, void **stack_base) {
@@ -57,11 +59,13 @@ extern "C" void __mlibc_thread_entry();
 		} else {
 			*stack_base = *stack;
 		}
-		
+
 		*stack = (void *)((char *)*stack_base + *stack_size);
 
 		void **stack_it = (void **)*stack;
 
+
+		*--stack_it = NULL;
 		*--stack_it = arg;
 		*--stack_it = tcb;
 		*--stack_it = entry;
