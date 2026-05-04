@@ -162,7 +162,7 @@ Sysdeps<Pselect>::operator()(int, fd_set *read_set, fd_set *write_set,
 
 	struct epoll_event evnts[16];
 	int n = epoll_pwait(fd, evnts, 16,
-	    timeout ? (timeout->tv_sec * 1000 + timeout->tv_nsec / 100) : -1,
+	    timeout ? (timeout->tv_sec * 1000 + timeout->tv_nsec / 1000000) : -1,
 	    sigmask);
 
 	if (n == -1)
