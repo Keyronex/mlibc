@@ -45,6 +45,7 @@ struct KeyronexSysdepTags :
 	Seek,
 	Ioctl,
 	Ftruncate,
+	Sync,
 	Fsync,
 	Fdatasync,
 	Flock,

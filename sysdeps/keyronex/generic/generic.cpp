@@ -430,6 +430,12 @@ Sysdeps<Fdatasync>::operator()(int fd)
 	return 0;
 }
 
+void
+Sysdeps<Sync>::operator()()
+{
+	syscall0(SYS_sync, NULL);
+}
+
 int
 Sysdeps<Flock>::operator()(int fd, int options)
 {
