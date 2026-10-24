@@ -3,6 +3,7 @@ sysdep_supported_options = {
 	'linux': true,
 	'glibc': true,
 	'bsd': true,
+	'bsd-procdesc': true,
 }
 
 rtld_sources += files(
@@ -15,6 +16,7 @@ libc_sources += files(
 	'generic/socket.cpp',
 	'generic/poll.cpp',
 	'generic/process.cpp',
+	'generic/procdesc.cpp',
 	'generic/signal.cpp',
 	'generic/thread.cpp',
 	host_machine.cpu_family() / 'thread.S'
@@ -83,6 +85,7 @@ if not no_headers
 		'include/abi-bits/aio.h',
 		'include/abi-bits/sched_param.h',
 		'include/abi-bits/clone-flags.h',
+		'include/abi-bits/procdesc.h',
 		subdir: 'abi-bits',
 		follow_symlinks: true
 	)

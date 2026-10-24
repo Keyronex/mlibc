@@ -104,7 +104,10 @@ struct KeyronexSysdepTags :
 	Clone,
 	PrepareStack,
 	ThreadExit,
-	GetTid
+	GetTid,
+	Pdfork,
+	Pdkill,
+	Pdwait
 {};
 
 template<typename Tag>
