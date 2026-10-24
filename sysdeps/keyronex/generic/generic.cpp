@@ -197,6 +197,16 @@ Sysdeps<Unlinkat>::operator()(int fd, const char *path, int flags)
 }
 
 int
+Sysdeps<Rmdir>::operator()(const char *path)
+{
+	int r = syscall3(SYS_unlinkat, AT_FDCWD, (uintptr_t)path, AT_REMOVEDIR,
+	    NULL);
+	if (r < 0)
+		return -r;
+	return 0;
+}
+
+int
 Sysdeps<Mkdirat>::operator()(int dirfd, const char *path, mode_t mode)
 {
 	int r = syscall3(SYS_mkdirat, dirfd, (uintptr_t)path, mode, NULL);
@@ -403,6 +413,24 @@ Sysdeps<Ftruncate>::operator()(int fd, size_t size)
 }
 
 int
+Sysdeps<Fsync>::operator()(int fd)
+{
+	int r = syscall2(SYS_fsync, fd, 0, NULL);
+	if (r < 0)
+		return -r;
+	return 0;
+}
+
+int
+Sysdeps<Fdatasync>::operator()(int fd)
+{
+	int r = syscall2(SYS_fsync, fd, 1, NULL);
+	if (r < 0)
+		return -r;
+	return 0;
+}
+
+int
 Sysdeps<Flock>::operator()(int fd, int options)
 {
 	int r = syscall2(SYS_flock, fd, options, NULL);
@@ -449,7 +477,7 @@ int
 Sysdeps<Ptsname>::operator()(int fd, char *buffer, size_t length)
 {
 	int index;
-	if (int e = sysdep<Ioctl>(fd, TIOCGPTN, &index, nullptr); e)
+	if (int e = sysdep<Ioctl>(fd, (uintptr_t)TIOCGPTN, &index, nullptr); e)
 		return e;
 	if ((size_t)snprintf(buffer, length, "/dev/pts%d", index) >= length) {
 		return ERANGE;
@@ -586,6 +614,22 @@ Sysdeps<GetEgid>::operator()()
 	gid_t r, e, s;
 	__ensure(sysdep<GetResgid>(&r, &e, &s) == 0);
 	return e;
+}
+
+int
+Sysdeps<SetGid>::operator()(gid_t gid)
+{
+	/* stub for now */
+	(void)gid;
+	return 0;
+}
+
+int
+Sysdeps<SetUid>::operator()(uid_t uid)
+{
+	/* stub for now */
+	(void)uid;
+	return 0;
 }
 
 /* misc */
