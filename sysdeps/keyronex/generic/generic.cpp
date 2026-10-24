@@ -437,6 +437,35 @@ Sysdeps<Sync>::operator()()
 }
 
 int
+Sysdeps<Mount>::operator()(const char *source, const char *target,
+    const char *fstype, unsigned long flags, const void *data)
+{
+	int r = syscall5(SYS_mount, (uintptr_t)source, (uintptr_t)target,
+	    (uintptr_t)fstype, flags, (uintptr_t)data, NULL);
+	if (r < 0)
+		return -r;
+	return 0;
+}
+
+int
+Sysdeps<Umount2>::operator()(const char *target, int flags)
+{
+	int r = syscall2(SYS_umount, (uintptr_t)target, flags, NULL);
+	if (r < 0)
+		return -r;
+	return 0;
+}
+
+int
+Sysdeps<Reboot>::operator()(int cmd)
+{
+	int r = syscall1(SYS_reboot, cmd, NULL);
+	if (r < 0)
+		return -r;
+	return 0;
+}
+
+int
 Sysdeps<Flock>::operator()(int fd, int options)
 {
 	int r = syscall2(SYS_flock, fd, options, NULL);

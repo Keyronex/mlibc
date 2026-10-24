@@ -56,6 +56,9 @@ enum posix_syscall {
 	SYS_fchmodat,
 	SYS_fchownat,
 	SYS_sync,
+	SYS_mount,
+	SYS_umount,
+	SYS_reboot,
 
 	/* open file ops */
 	SYS_close,
