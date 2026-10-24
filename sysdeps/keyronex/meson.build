@@ -3,6 +3,7 @@ sysdep_supported_options = {
 	'linux': true,
 	'glibc': true,
 	'bsd': true,
+	'bsd-procdesc': true,
 }
 
 rtld_sources += files(
@@ -15,6 +16,7 @@ libc_sources += files(
 	'generic/socket.cpp',
 	'generic/poll.cpp',
 	'generic/process.cpp',
+	'generic/procdesc.cpp',
 	'generic/signal.cpp',
 	'generic/thread.cpp',
 	host_machine.cpu_family() / 'thread.S'
@@ -79,6 +81,7 @@ if not no_headers
 		'include/abi-bits/sockaddr_storage.h',
 		'include/abi-bits/sig-limits.h',
 		'include/abi-bits/sigset_t.h',
+		'include/abi-bits/procdesc.h',
 		subdir: 'abi-bits',
 		follow_symlinks: true
 	)
