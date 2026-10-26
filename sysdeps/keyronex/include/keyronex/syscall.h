@@ -52,12 +52,15 @@ enum posix_syscall {
 	SYS_renameat,
 	SYS_fstatat,
 	SYS_readlinkat,
+	SYS_symlinkat,
 	SYS_truncate,
 	SYS_fchmodat,
 	SYS_fchownat,
 	SYS_sync,
 	SYS_mount,
 	SYS_umount,
+	SYS_statfs,
+	SYS_fstatfs,
 	SYS_reboot,
 
 	/* open file ops */

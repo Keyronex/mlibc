@@ -1,3 +1,6 @@
+#include <sys/statfs.h>
+#include <sys/statvfs.h>
+
 #include <asm/ioctls.h>
 
 #include <keyronex/syscall.h>
@@ -7,6 +10,7 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include <bits/ensure.h>
 #include <frg/logging.hpp>
@@ -285,6 +289,86 @@ Sysdeps<Readlink>::operator()(const char *path, void *buffer, size_t max_size,
 }
 
 int
+Sysdeps<Symlinkat>::operator()(const char *target_path, int dirfd,
+    const char *link_path)
+{
+	int r = syscall3(SYS_symlinkat, (uintptr_t)target_path, dirfd,
+	    (uintptr_t)link_path, NULL);
+	if (r < 0)
+		return -r;
+	return 0;
+}
+
+int
+Sysdeps<Symlink>::operator()(const char *target_path, const char *link_path)
+{
+	return sysdep<Symlinkat>(target_path, AT_FDCWD, link_path);
+}
+
+int
+Sysdeps<Statfs>::operator()(const char *path, struct statfs *buf)
+{
+	int r = syscall2(SYS_statfs, (uintptr_t)path, (uintptr_t)buf, NULL);
+	if (r < 0)
+		return -r;
+	return 0;
+}
+
+int
+Sysdeps<Fstatfs>::operator()(int fd, struct statfs *buf)
+{
+	int r = syscall2(SYS_fstatfs, fd, (uintptr_t)buf, NULL);
+	if (r < 0)
+		return -r;
+	return 0;
+}
+
+// Inspired by musl (src/stat/statvfs.c:28 fixup function)
+static void
+statfs_to_statvfs(struct statfs *from, struct statvfs *to)
+{
+	*to = {
+		.f_bsize = from->f_bsize,
+		.f_frsize = from->f_frsize ? from->f_frsize : from->f_bsize,
+		.f_blocks = from->f_blocks,
+		.f_bfree = from->f_bfree,
+		.f_bavail = from->f_bavail,
+		.f_files = from->f_files,
+		.f_ffree = from->f_ffree,
+		.f_favail = from->f_ffree,
+		.f_fsid = (unsigned long) from->f_fsid.__val[0],
+#if __INTPTR_WIDTH__ == 32
+		.__f_unused = 0,
+#endif
+		.f_flag = from->f_flags,
+		.f_namemax = from->f_namelen,
+		.f_spare = { 0 },
+	};
+}
+
+int
+Sysdeps<Statvfs>::operator()(const char *path, struct statvfs *out)
+{
+	struct statfs sb;
+	int r = sysdep<Statfs>(path, &sb);
+	if (r != 0)
+		return r;
+	statfs_to_statvfs(&sb, out);
+	return 0;
+}
+
+int
+Sysdeps<Fstatvfs>::operator()(int fd, struct statvfs *out)
+{
+	struct statfs sb;
+	int r = sysdep<Fstatfs>(fd, &sb);
+	if (r != 0)
+		return r;
+	statfs_to_statvfs(&sb, out);
+	return 0;
+}
+
+int
 Sysdeps<Truncate>::operator()(const char *path, off_t length)
 {
 	int r = syscall2(SYS_truncate, (uintptr_t)path, length, NULL);
@@ -383,9 +467,10 @@ Sysdeps<Write>::operator()(int fd, const void *buf, size_t count, ssize_t *bytes
 int
 Sysdeps<Seek>::operator()(int fd, off_t offset, int whence, off_t *new_offset)
 {
-	off_t r = syscall3(SYS_seek, fd, offset, whence, NULL);
-	if (r >= 0) {
-		*new_offset = r;
+	uintptr_t out;
+	int r = syscall3(SYS_seek, fd, offset, whence, &out);
+	if (r == 0) {
+		*new_offset = (off_t)out;
 		return 0;
 	}
 	return -r;
