@@ -36,6 +36,20 @@ Sysdeps<LibcPanic>::operator()()
 		;
 }
 
+#ifndef MLIBC_BUILDING_RTLD
+/* called by m68k libgcc's __clear_cache */
+extern "C" int
+__keyronex_sync_icache(void *addr, size_t len)
+{
+	int r = syscall2(SYS_sync_icache, (uintptr_t)addr, len, NULL);
+	if (r < 0) {
+		errno = -r;
+		return -1;
+	}
+	return 0;
+}
+#endif
+
 int
 Sysdeps<FutexTid>::operator()()
 {

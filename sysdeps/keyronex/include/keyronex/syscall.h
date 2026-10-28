@@ -42,6 +42,7 @@ enum posix_syscall {
 	SYS_mmap,
 	SYS_munmap,
 	SYS_mprotect,
+	SYS_sync_icache,
 
 	/* vfs ops */
 	SYS_openat,
